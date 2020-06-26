@@ -1,17 +1,19 @@
 const express = require('express');
-const axios = require('axios')
-
+const axios = require('axios');
+const config = require('config');
 const { User } = require('../models/user');
 const sourceRouter = express.Router();
 
 
+const endPointUrl = `${config.get('news-api-url')}/sources?language=en&apiKey=${config.get('news-api-key')}`
+
+
 sourceRouter.get('/all', async (req, res) => {
     try {
-        const { data } = await axios.get(`https://newsapi.org/v2/sources?language=en&apiKey=${process.env.API_KEY}`)
+        const { data } = await axios.get(endPointUrl)
         return res.send(data.sources);
 
     } catch (error) {
-        console.log(error);
         return res.status(400).send({ "error": error })
     }
 })
@@ -28,11 +30,15 @@ sourceRouter.put('/', async (req, res) => {
 
     if (!sourceID) return res.status(400).send('no source id');
     user = await User.findById(req.user._id);
+
     if (user.subscribes.includes(sourceID)) return res.send({ status: "error", message: "source already added" });
 
-    await User.findByIdAndUpdate(req.user._id, { $push: { subscribes: [sourceID] } }, { new: true })
-
-    return res.send({ status: "done" })
+    try {
+        await User.findByIdAndUpdate(req.user._id, { $push: { subscribes: [sourceID] } }, { new: true })
+        return res.send({ status: "done" })
+    } catch (error) {
+        return res.send({ status: "error" })
+    }
 })
 
 sourceRouter.delete('/', async (req, res) => {

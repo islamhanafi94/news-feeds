@@ -1,0 +1,4 @@
+{
+    "name": "app-developement",
+    "DB_URL": "mongodb://localhost/newsfeeds"
+}

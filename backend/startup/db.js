@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
-
+const config = require('config');
 
 module.exports = () => {
-    const DB_URL = process.env.DB_URL;
+    const DB_URL = config.get('DB_URL');
     mongoose.connect(DB_URL,
         {
             useCreateIndex: true,

@@ -1,6 +1,5 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
-const Joi = require('@hapi/joi');
 
 const { User, registerFormValidation } = require('../models/user');
 const authMiddleware = require('../middlewares/auth');

@@ -1,0 +1,6 @@
+{
+    "name": "news-feeds-app",
+    "port": "5000",
+    "news-api-key": "291089f7c81b429485d81d077cd41617",
+    "news-api-url":"https://newsapi.org/v2"
+}
