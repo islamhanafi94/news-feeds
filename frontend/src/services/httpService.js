@@ -1,5 +1,7 @@
 import axios from 'axios';
+import { apiUrl } from "../config.json";
 
+axios.defaults.baseURL = process.env.REACT_APP_API_URL || apiUrl
 
 
 export function setJwt(token) {

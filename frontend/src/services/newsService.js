@@ -1,7 +1,6 @@
 import http from './httpService';
-import { apiUrl } from '../config.json';
 
-const apiEndPoint = apiUrl + '/news';
+const apiEndPoint = '/news';
 
 export async function getNews() {
     const result = await http.get(apiEndPoint)
