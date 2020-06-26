@@ -27,7 +27,6 @@ function RegisterForm(props) {
 
         const errors = registerValidate(user);
         setErrors(errors || {});
-        console.log(errors);
         if (errors) return;
 
         try {
