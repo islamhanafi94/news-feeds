@@ -1,33 +1,34 @@
-import Joi from 'joi-browser';
-
+import Joi from "joi-browser";
 
 export const loginValidate = (formObject) => {
+
+
     const schema = {
         email: Joi.string()
-            .email()
             .required()
-            .label("email"),
+            .email()
+            .label("Email"),
         password: Joi.string()
             .required()
+            .min(3)
+            .max(30)
             .label("Password")
-    };
+    }
 
-    const { error } = Joi.validate(formObject, schema, { abortEarly: false });
+    const { error } = Joi.validate(formObject, schema, { abortEarly: false })
+
     if (!error) return null;
 
     const errorMessages = {}
     error.details.map((item) => {
         if (!errorMessages[item.path[0]]) {
-            errorMessages[item.path[0]] = [item.message]
-        } else {
-            errorMessages[item.path[0]].push(item.message)
+            return errorMessages[item.path[0]] = [item.message]
         }
+        return errorMessages[item.path[0]].push(item.message)
     })
 
     return errorMessages;
-
 }
-
 
 export const registerValidate = (user) => {
     const schema = Joi.object({
@@ -47,7 +48,7 @@ export const registerValidate = (user) => {
             .email({ minDomainSegments: 2 })
             .required(),
 
-        password: Joi.string(),
+        password: Joi.string().required(),
 
         repeatPassword: Joi.ref('password'),
     }).with('password', 'repeatPassword')
@@ -58,10 +59,10 @@ export const registerValidate = (user) => {
     const errorMessages = {}
     error.details.map((item) => {
         if (!errorMessages[item.path[0]]) {
-            errorMessages[item.path[0]] = [item.message]
-        } else {
-            errorMessages[item.path[0]].push(item.message)
+            return errorMessages[item.path[0]] = [item.message]
         }
+        return errorMessages[item.path[0]].push(item.message)
+
     })
 
     return errorMessages;

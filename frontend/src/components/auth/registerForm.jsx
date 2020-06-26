@@ -3,6 +3,7 @@ import {
     Avatar, Container, CssBaseline, Typography,
     TextField, Button, Grid, Link, makeStyles
 } from '@material-ui/core';
+import Alert from '@material-ui/lab/Alert';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { registerValidate } from '../../services/formValidation';
 import { register } from '../../services/userService';
@@ -32,10 +33,17 @@ function RegisterForm(props) {
         try {
             await register(user);
             window.location = '/home';
-        } catch (error) {
-            // handle error msg to user according to backend validation
-            // TO-DO
-            console.log(error);
+        } catch ({ response }) {
+            if (response && response.status === 400) {
+                const errorMsg = { ...errors }
+                errorMsg.all = "invalid email or password";
+                setErrors(errorMsg);
+            }
+            if (response && response.status === 403) {
+                const errorMsg = { ...errors }
+                errorMsg.all = "user already exists, please login";
+                setErrors(errorMsg);
+            }
         }
     }
     return (
@@ -52,7 +60,7 @@ function RegisterForm(props) {
                     <Grid container spacing={2}>
                         <Grid item xs={12} sm={6}>
                             <TextField
-                                error={errors['firstName'] ? true : false}
+                                error={errors.firstName ? true : false}
                                 autoComplete="fname"
                                 name="firstName"
                                 value={user.firstName}
@@ -68,6 +76,7 @@ function RegisterForm(props) {
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 name="lastName"
+                                error={errors.lastName ? true : false}
                                 value={user.lastName}
                                 onChange={handleInputChange}
                                 variant="outlined"
@@ -80,6 +89,7 @@ function RegisterForm(props) {
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
+                                error={errors.email ? true : false}
                                 value={user.email}
                                 onChange={handleInputChange}
                                 name="email"
@@ -93,6 +103,7 @@ function RegisterForm(props) {
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
+                                error={errors.password || errors.repeatPassword ? true : false}
                                 name="password"
                                 value={user.password}
                                 onChange={handleInputChange}
@@ -108,6 +119,7 @@ function RegisterForm(props) {
                         <Grid item xs={12}>
                             <TextField
                                 name="repeatPassword"
+                                error={errors.password || errors.repeatPassword ? true : false}
                                 value={user.repeatPassword}
                                 onChange={handleInputChange}
                                 variant="outlined"
@@ -120,6 +132,8 @@ function RegisterForm(props) {
                         </Grid>
 
                     </Grid>
+                    {errors.all ? <Alert severity="error">{errors.all}</Alert> : ""}
+
                     <Button
                         type="submit"
                         fullWidth
@@ -128,7 +142,7 @@ function RegisterForm(props) {
                         className={classes.submit}
                     >
                         Sign Up
-            </Button>
+                    </Button>
                     <Grid container justify="flex-end">
                         <Grid item>
                             <Link href="/login" variant="body2">

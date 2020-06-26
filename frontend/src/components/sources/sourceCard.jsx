@@ -1,40 +1,28 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Grid, Typography, Button, Card, CardActions, CardContent } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import sourcesService from '../../services/sourcesService';
 
-function SourceCard({ card, styleClasses: classes }) {
-    const [userSubscribes, setUserSubscribes] = useState([])
-    const [isChanged, setIsChanged] = useState(false);
+function SourceCard({ card, styleClasses: classes, status }) {
+    const [isSubscribed, setIsSubscribed] = useState(status);
 
-    useEffect(() => {
-        (async () => {
-            const subscribes = await sourcesService.getUserSources();
-            setUserSubscribes(subscribes)
-        })()
-    }, [isChanged])
 
-    const handleUnSubscribe = async (e) => {
-        e.preventDefault();
+    const handleUnSubscribe = async () => {
         await sourcesService.removeSource(card.id);
-        setIsChanged(!isChanged)
-    }
-    const handleSubscribe = async (e) => {
-        e.preventDefault();
-        await sourcesService.addSource(card.id)
-        setIsChanged(!isChanged)
+        setIsSubscribed(false)
     }
 
+    const handleSubscribe = async () => {
+        await sourcesService.addSource(card.id);
+        setIsSubscribed(true)
+    }
     return (
         <Grid item xs={12} sm={6} md={4}>
             <Card className={classes.card}>
                 <CardContent className={classes.cardContent}>
                     <Typography gutterBottom variant="h5" component="h2">
                         {card.name}
-                        {/* <Chip
-                            label={card.language}
-                        /> */}
                     </Typography>
                     <Typography>
                         {card.description}
@@ -51,28 +39,16 @@ function SourceCard({ card, styleClasses: classes }) {
                         size="small"
                     >
                         Visit Website
+                </Button>
+                    <Button
+                        variant="contained"
+                        color={isSubscribed ? "secondary" : "primary"}
+                        className={classes.button}
+                        startIcon={isSubscribed ? <DeleteIcon /> : <CheckCircleIcon />}
+                        size="small"
+                        onClick={isSubscribed ? handleUnSubscribe : handleSubscribe}
+                    >{isSubscribed ? "Unsubscribe" : "Subscribe"}
                     </Button>
-                    {userSubscribes.includes(card.id) ?
-                        <Button
-                            variant="contained"
-                            color="secondary"
-                            className={classes.button}
-                            startIcon={<DeleteIcon />}
-                            size="small"
-                            onClick={handleUnSubscribe}
-                        >Unsubscribe
-                        </Button>
-                        : <Button
-                            variant="contained"
-                            color="primary"
-                            className={classes.button}
-                            size="small"
-                            onClick={handleSubscribe}
-                            startIcon={<CheckCircleIcon />}
-                        >Subscribe
-                    </Button>
-                    }
-
                 </CardActions>
             </Card>
         </Grid>

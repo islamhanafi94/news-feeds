@@ -3,6 +3,8 @@ import {
     Avatar, Container, CssBaseline, Typography,
     TextField, Button, Grid, Link, makeStyles
 } from '@material-ui/core';
+import Alert from '@material-ui/lab/Alert';
+
 import { loginValidate } from '../../services/formValidation';
 import { login } from '../../services/authService';
 
@@ -10,7 +12,7 @@ function LoginForm() {
     const classes = useStyles();
 
     const [user, setUser] = useState({ email: "", password: "" })
-    // const [errors, setErrors] = useState({})
+    const [errors, setErrors] = useState({})
 
     const handleInputChange = (e) => {
         const newUser = { ...user }
@@ -21,17 +23,19 @@ function LoginForm() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const verrors = loginValidate(user);
-        console.log(verrors);
-        // setErrors(verrors || {});
-        // if (verrors) return;
+        const errors = loginValidate(user);
+
+        setErrors(errors || {});
+        if (errors) return;
         try {
             await login(user.email, user.password);
             window.location = '/home';
-        } catch (error) {
-            // handle error msg to user according to backend validation
-            // TO-DO
-            console.log(error);
+        } catch ({ response }) {
+            if (response && response.status === 400) {
+                const errorMsg = { ...errors }
+                errorMsg.all = "invalid email or password";
+                setErrors(errorMsg);
+            }
         }
     }
     return (
@@ -46,10 +50,10 @@ function LoginForm() {
                 <form onSubmit={handleSubmit} className={classes.form} noValidate>
                     <TextField
                         variant="outlined"
+                        error={errors.email || errors.all ? true : false}
                         margin="normal"
                         required
                         fullWidth
-                        helperText=""
                         id="email"
                         value={user.email}
                         onChange={handleInputChange}
@@ -58,10 +62,12 @@ function LoginForm() {
                         autoComplete="email"
                         autoFocus
                     />
+                    {errors.email ? errors.email.map((msg, index) => (<Alert key={index} severity="error">{msg}</Alert>)) : ""}
                     <TextField
                         variant="outlined"
                         margin="normal"
                         required
+                        error={errors.password || errors.all ? true : false}
                         fullWidth
                         name="password"
                         value={user.password}
@@ -71,6 +77,9 @@ function LoginForm() {
                         id="password"
                         autoComplete="current-password"
                     />
+                    {errors.password ? errors.password.map((msg, index) => (<Alert key={index} severity="error">{msg}</Alert>)) : ""}
+                    {errors.all ? <Alert severity="error">{errors.all}</Alert> : ""}
+
                     <Button
                         type="submit"
                         fullWidth

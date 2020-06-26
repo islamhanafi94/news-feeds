@@ -2,7 +2,6 @@ import axios from 'axios';
 
 
 
-
 export function setJwt(token) {
     axios.defaults.headers.common['x-auth-token'] = token
 }

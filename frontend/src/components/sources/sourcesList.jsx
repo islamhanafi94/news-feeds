@@ -1,11 +1,10 @@
-
 import React from 'react';
 import { CssBaseline, Grid, Typography, makeStyles, Container } from '@material-ui/core';
 import SourceCard from './sourceCard';
 
 export default function SourcesList(props) {
     const classes = useStyles();
-    const { sources, title } = props;
+    const { sources, title, userSubscribes } = props;
     return (
         <React.Fragment>
             <CssBaseline />
@@ -20,7 +19,12 @@ export default function SourcesList(props) {
                 <Container className={classes.cardGrid} maxWidth="md">
                     <Grid container spacing={4}>
                         {sources.map((card, index) => (
-                            <SourceCard key={index} styleClasses={classes} card={card} />
+                            <SourceCard
+                                key={index}
+                                status={userSubscribes.includes(card.id)}
+                                styleClasses={classes}
+                                card={card}
+                            />
                         ))}
                     </Grid>
                 </Container>
