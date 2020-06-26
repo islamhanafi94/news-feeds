@@ -1,19 +1,23 @@
 const express = require('express');
 
-require('dotenv-safe').config();
-const config = require('config');
-
 const app = express();
 
-require('./startup/config')();
+if (app.get('env') === 'development') {
+    require('dotenv-safe').config();
+}
+
+require('./startup/config')(app);
 require('./startup/morgan')(app);
 require('./startup/cors')(app);
 require('./startup/db')();
 require('./startup/routes')(app);
-require('./startup/production');
+require('./startup/production')(app);
 
-app.listen(config.get('port'), () => {
-    console.log('Server is Running on port', config.get('port'));
+
+const port = process.env.PORT || 5000;
+
+app.listen(port, () => {
+    console.log('Server is Running on port', port);
 })
 
 
