@@ -15,7 +15,7 @@
 - Clone the project repo and ```cd``` to frontend directory
 - ``npm install``
 - Edit ``config.json`` file containing API url .
-- Run the server ``npm start``
+- Run the server ``npm start``..
  
 
 ### Or test the deployed app
